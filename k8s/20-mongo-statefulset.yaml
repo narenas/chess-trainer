@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+  namespace: chess-trainer
+spec:
+  serviceName: mongo
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+      - name: mongo
+        image: mongo:6.0
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-pv
+          mountPath: /data/db
+        args:
+          - "--bind_ip_all"
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "256Mi"
+          limits:
+            cpu: "300m"
+            memory: "512Mi"
+  volumeClaimTemplates:
+  - metadata:
+      name: mongo-pv
+    spec:
+      storageClassName: local-path
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 2Gi

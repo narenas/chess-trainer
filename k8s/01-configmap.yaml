@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chess-config
+  namespace: chess-trainer
+data:
+  MONGO_URI: mongodb://mongo-0.mongo.chess-trainer.svc.cluster.local:27017
+  DB_NAME: chess_trainer

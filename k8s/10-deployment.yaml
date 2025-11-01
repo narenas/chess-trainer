@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chess-api
+  namespace: chess-trainer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: chess-api
+  template:
+    metadata:
+      labels:
+        app: chess-api
+    spec:
+      containers:
+      - name: api
+        image: <tu-registro>/chess-trainer-api:0.1.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MONGO_URI
+          valueFrom:
+            configMapKeyRef:
+              name: chess-config
+              key: MONGO_URI
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: chess-config
+              key: DB_NAME
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"

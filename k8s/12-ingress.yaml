@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: chess-api
+  namespace: chess-trainer
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: chess.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: chess-api
+            port:
+              number: 80
