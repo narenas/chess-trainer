@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: chess-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: chess_trainer
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  api:
+    image: narenas/chess-trainer-api:0.1.0
+    container_name: chess-api
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URI: mongodb://mongo:27017
+      DB_NAME: chess_trainer
+    ports:
+      - "8080:8080"
+    restart: always
+
+volumes:
+  mongo-data:
